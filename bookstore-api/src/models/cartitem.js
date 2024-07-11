@@ -21,9 +21,69 @@ module.exports = (sequelize, DataTypes) => {
   }
   CartItem.init(
     {
-      cart_id: DataTypes.INTEGER,
-      book_id: DataTypes.INTEGER,
-      quantity: DataTypes.INTEGER,
+      cart_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Cart',
+          key: 'id',
+        },
+        validate: {
+          notNull: {
+            args: true,
+            msg: 'Cart id is requiered',
+          },
+          isInt: {
+            args: true,
+            msg: 'Cart id must be an integer',
+          },
+        },
+        isExist(val) {
+          return sequelize.models.Cart.findByPk(value).then((cart) => {
+            if (!cart) {
+              throw new Error('cart does not exist');
+            }
+          });
+        },
+      },
+      book_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Book',
+          key: 'id',
+        },
+        validate: {
+          notNull: {
+            args: true,
+            msg: 'Book id is requiered',
+          },
+          isInt: {
+            args: true,
+            msg: 'Book id must be an integer',
+          },
+        },
+        isExist(val) {
+          return sequelize.models.Book.findByPk(value).then((book) => {
+            if (!book) {
+              throw new Error('Book does not exist');
+            }
+          });
+        },
+      },
+      quantity: {
+        type: DataTypes.INTEGER,
+        validate: {
+          notNull: {
+            args: true,
+            msg: 'Quantity is required',
+          },
+          isInt: {
+            args: true,
+            msg: 'Quantity must be an integer',
+          },
+        },
+      },
     },
     {
       sequelize,

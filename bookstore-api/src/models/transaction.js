@@ -17,9 +17,55 @@ module.exports = (sequelize, DataTypes) => {
   }
   Transaction.init(
     {
-      user_id: DataTypes.INTEGER,
-      total: DataTypes.INTEGER,
-      status: DataTypes.STRING,
+      user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'User',
+          key: 'id',
+        },
+        validate: {
+          notNull: {
+            args: true,
+            msg: 'User id is requiered',
+          },
+          isInt: {
+            args: true,
+            msg: 'User id must be an integer',
+          },
+        },
+        isExist(val) {
+          return sequelize.models.User.findByPk(value).then((user) => {
+            if (!user) {
+              throw new Error('User does not exist');
+            }
+          });
+        },
+      },
+      total: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notNull: {
+            args: true,
+            msg: 'Total is required',
+          },
+          isInt: {
+            args: true,
+            msg: 'Total must be an integer',
+          },
+        },
+      },
+      status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            args: true,
+            msg: 'Status is required',
+          },
+        },
+      },
     },
     {
       sequelize,

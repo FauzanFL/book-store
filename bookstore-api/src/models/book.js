@@ -17,10 +17,50 @@ module.exports = (sequelize, DataTypes) => {
   }
   Book.init(
     {
-      title: DataTypes.STRING,
-      description: DataTypes.STRING,
-      author: DataTypes.STRING,
-      stock: DataTypes.INTEGER,
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            args: true,
+            msg: 'Title is required',
+          },
+        },
+      },
+      description: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            args: true,
+            msg: 'Description is required',
+          },
+        },
+      },
+      author: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            args: true,
+            msg: 'Author is required',
+          },
+        },
+      },
+      stock: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+          notNull: {
+            args: true,
+            msg: 'Stock is required',
+          },
+          isInt: {
+            args: true,
+            msg: 'Stock must be an integer',
+          },
+        },
+      },
     },
     {
       sequelize,

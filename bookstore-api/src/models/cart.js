@@ -21,7 +21,31 @@ module.exports = (sequelize, DataTypes) => {
   }
   Cart.init(
     {
-      user_id: DataTypes.INTEGER,
+      user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'User',
+          key: 'id',
+        },
+        validate: {
+          notNull: {
+            args: true,
+            msg: 'User id is requiered',
+          },
+          isInt: {
+            args: true,
+            msg: 'User id must be an integer',
+          },
+        },
+        isExist(val) {
+          return sequelize.models.User.findByPk(value).then((user) => {
+            if (!user) {
+              throw new Error('User does not exist');
+            }
+          });
+        },
+      },
     },
     {
       sequelize,
