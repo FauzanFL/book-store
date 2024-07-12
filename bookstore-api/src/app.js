@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+require('dotenv').config();
 
 const app = express();
 const port = 3000;
@@ -11,7 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   session({
-    secret: 'ffl',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
   })
