@@ -12,10 +12,12 @@ class CartsController {
         attributes: ['id', 'user_id'],
         include: {
           model: CartItem,
+          as: 'items',
           attributes: ['id', 'book_id', 'quantity'],
           include: {
             model: Book,
             attributes: ['id', 'title', 'price'],
+            as: 'book',
           },
         },
       });
@@ -68,11 +70,16 @@ class CartsController {
   }
 
   async removeFromCart(req, res) {
-    const { id } = req.params;
+    const { itemId } = req.params;
+    const user = req.session.user;
+    if (!user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
     try {
-      const cartItem = await CartItem.findByPk(id);
+      const cartItem = await CartItem.findByPk(itemId);
       if (!cartItem) {
-        res.status(404).json({ message: 'Cart item not found' });
+        return res.status(404).json({ message: 'Cart item not found' });
       }
       await cartItem.destroy();
       res.status(200).json({ message: 'Cart item removed' });

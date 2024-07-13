@@ -12,10 +12,12 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.CartItem, {
         sourceKey: 'id',
         foreignKey: 'cart_id',
+        as: 'items',
       });
       this.belongsTo(models.User, {
         foreignKey: 'user_id',
         targetKey: 'id',
+        as: 'user',
       });
     }
   }

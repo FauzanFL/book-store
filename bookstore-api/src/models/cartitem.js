@@ -12,10 +12,12 @@ module.exports = (sequelize, DataTypes) => {
       CartItem.belongsTo(models.Book, {
         foreignKey: 'book_id',
         targetKey: 'id',
+        as: 'book',
       });
       CartItem.belongsTo(models.Cart, {
         foreignKey: 'cart_id',
         targetKey: 'id',
+        as: 'cart',
       });
     }
   }
