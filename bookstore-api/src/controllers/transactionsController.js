@@ -37,4 +37,4 @@ class TransactionsController {
   }
 }
 
-module.exports = BooksController;
+module.exports = TransactionsController;
