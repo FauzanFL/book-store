@@ -11,13 +11,58 @@ import {
 } from '@mui/material';
 import Header from '../components/Header';
 import CartButton from '../components/CartButton';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { isLogin } from '../api/users';
+import { getTransactions } from '../api/transactions';
 
 const Transactions = () => {
+  const navigate = useNavigate();
+  const [transactions, setTransactions] = useState([]);
+  useEffect(() => {
+    const isLoggedIn = async () => {
+      try {
+        await isLogin();
+      } catch (e) {
+        if (e.request.status === 401) {
+          // set alert
+          navigate('/');
+        } else {
+          console.error(e);
+        }
+      }
+    };
+
+    const fetchTransactions = async () => {
+      try {
+        const res = await getTransactions();
+        if (res.data) {
+          setTransactions(res.data);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchTransactions();
+    isLoggedIn();
+  }, [navigate]);
+
   function createData(total, status, date) {
     return { total, status, date };
   }
 
-  const rows = [createData(500000, 'success', '2021-10-10')];
+  let rows = [];
+  if (transactions && transactions.length !== 0) {
+    rows = transactions.map((transaction) => {
+      return createData(
+        transaction.total,
+        transaction.status,
+        transaction.created_at
+      );
+    });
+  }
+  //   const rows = [createData(500000, 'success', '2021-10-10')];
 
   return (
     <>

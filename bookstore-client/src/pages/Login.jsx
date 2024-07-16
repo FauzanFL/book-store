@@ -10,8 +10,8 @@ import {
   OutlinedInput,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
-import { login } from '../api/users';
+import { useEffect, useState } from 'react';
+import { isLogin, login } from '../api/users';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -19,6 +19,17 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const isLoggedIn = async () => {
+      const res = await isLogin();
+      if (res.status === 200) {
+        navigate('/books');
+      }
+    };
+
+    isLoggedIn();
+  }, [navigate]);
 
   const handleLogin = async () => {
     try {

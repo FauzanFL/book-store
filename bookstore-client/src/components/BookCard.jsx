@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 
 /* eslint-disable react/prop-types */
-const BookCard = ({ book }) => {
+const BookCard = ({ book, openModalAddCart, openModalOrder }) => {
   return (
     <>
       <Card sx={{ p: 1 }}>
@@ -25,16 +25,30 @@ const BookCard = ({ book }) => {
           <Typography variant="subtitle1">
             <b>Author:</b> {book.author}
           </Typography>
+          <Typography variant="subtitle1">
+            <b>Stock:</b> {book.stock}
+          </Typography>
           <Typography variant="body2">
             <b>Rp. {book.price}</b>
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small" fullWidth variant="contained">
+          <Button
+            onClick={() => openModalAddCart(book)}
+            size="small"
+            fullWidth
+            variant="contained"
+          >
             <AddShoppingCart sx={{ m: '2px 5px 2px 2px' }} />
             Add to Cart
           </Button>
-          <Button size="small" color="warning" fullWidth variant="contained">
+          <Button
+            onClick={() => openModalOrder(book)}
+            size="small"
+            color="warning"
+            fullWidth
+            variant="contained"
+          >
             <Paid sx={{ m: '2px 5px 2px 2px' }} />
             Order
           </Button>

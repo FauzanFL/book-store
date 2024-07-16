@@ -21,11 +21,10 @@ class UsersController {
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        res.status(401).json({ message: 'Invalid password' });
-      } else {
-        req.session.user = user;
-        res.status(200).json({ message: 'Login successful' });
+        return res.status(401).json({ message: 'Invalid password' });
       }
+      req.session.user = user;
+      res.status(200).json({ message: 'Login successful' });
     } catch (error) {
       res.status(500).json({ message: error.message });
       console.log(error);
@@ -45,6 +44,7 @@ class UsersController {
 
   isLogin(req, res) {
     const user = req.session.user;
+    console.log(user);
     if (!user) {
       return res.status(401).json({ message: 'Unauthorized' });
     }

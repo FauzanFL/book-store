@@ -16,7 +16,7 @@ class CartsController {
           attributes: ['id', 'book_id', 'quantity'],
           include: {
             model: Book,
-            attributes: ['id', 'title', 'price'],
+            attributes: ['id', 'title', 'price', 'author', 'image'],
             as: 'book',
           },
         },
@@ -81,6 +81,9 @@ class CartsController {
       if (!cartItem) {
         return res.status(404).json({ message: 'Cart item not found' });
       }
+
+      const book = await Book.findByPk(cartItem.book_id);
+      await book.update({ stock: book.stock + cartItem.quantity });
       await cartItem.destroy();
       res.status(200).json({ message: 'Cart item removed' });
     } catch (error) {

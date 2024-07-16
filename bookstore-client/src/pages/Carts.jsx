@@ -2,8 +2,24 @@
 import { Box, Button, Card, CardMedia, Typography } from '@mui/material';
 import Header from '../components/Header';
 import { Paid, RemoveCircle } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { isLogin } from '../api/users';
+import { getCart, removeItemFromCart } from '../api/carts';
 
-const Item = ({ data }) => {
+const Item = ({ data, render }) => {
+  const handleRemove = async () => {
+    try {
+      const res = await removeItemFromCart(data.id);
+      if (res.status === 200) {
+        console.log(res.data.message);
+        render();
+      }
+    } catch (e) {
+      // alert error
+      console.log(e);
+    }
+  };
   return (
     <>
       <div className="flex items-center gap-1">
@@ -19,39 +35,92 @@ const Item = ({ data }) => {
           <div className="flex items-center">
             <CardMedia
               sx={{ height: 120, width: 70, mr: 2 }}
-              image={data.image}
+              image={data.book.image}
             />
             <div className="">
               <Typography variant="h6">
-                <b>{data.title}</b>
+                <b>{data.book.title}</b>
               </Typography>
               <Typography variant="subtitle2">
-                <p>{data.author}</p>
+                <p>{data.book.author}</p>
               </Typography>
             </div>
           </div>
-          <div className="flex">
-            <Typography variant="subtitle2">
-              <b>Rp. {data.price}</b>
+          <div className="">
+            <div className="border-b border-black p-1">
+              <Typography variant="subtitle2">
+                <p>Rp. {data.book.price}</p>
+              </Typography>
+              <Typography variant="subtitle2">
+                <p className="text-right font-bold">x {data.quantity}</p>
+              </Typography>
+            </div>
+            <Typography variant="subtitle1">
+              <b>Rp. {data.book.price * data.quantity}</b>
             </Typography>
           </div>
         </Card>
-        <RemoveCircle className="hover:cursor-pointer" color="#EA3323" />
+        <RemoveCircle
+          className="hover:cursor-pointer"
+          onClick={handleRemove}
+          sx={{ color: '#EA3323' }}
+        />
       </div>
     </>
   );
 };
 
 const Carts = () => {
-  const falseData = [
-    {
-      title: 'Apaan tuh?',
-      author: 'J.R.R Tolkien',
-      image:
-        'https://www.pluggedin.com/wp-content/uploads/2020/01/hobbit-cover.jpg',
-      price: 300000,
-    },
-  ];
+  const navigate = useNavigate();
+  const [cart, setCart] = useState({});
+
+  useEffect(() => {
+    const isLoggedIn = async () => {
+      try {
+        await isLogin();
+      } catch (e) {
+        if (e.request.status === 401) {
+          // set alert
+          navigate('/');
+        } else {
+          console.error(e);
+        }
+      }
+    };
+
+    const fetchCart = async () => {
+      try {
+        const res = await getCart();
+        if (res.data) {
+          setCart(res.data);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchCart();
+    isLoggedIn();
+  }, [navigate]);
+
+  const render = async () => {
+    try {
+      const res = await getCart();
+      if (res.data) {
+        setCart(res.data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  let total = 0;
+  if (cart.items) {
+    total = cart.items.reduce((num, item) => {
+      return num + item.quantity * item.book.price;
+    }, 0);
+  }
+
   return (
     <>
       <Header />
@@ -75,13 +144,14 @@ const Carts = () => {
             <b>Cart</b>
           </Typography>
           <div className="">
-            {falseData.map((item, i) => (
-              <Item key={i} data={item} />
-            ))}
+            {cart.items &&
+              cart.items.map((item, i) => (
+                <Item key={i} data={item} render={render} />
+              ))}
           </div>
           <div className="flex justify-between border-t border-black py-2">
             <b>Total</b>
-            <b>Rp. 5000000</b>
+            <b>Rp. {total}</b>
           </div>
           <Button variant="contained" color="warning">
             <Paid sx={{ mr: 1 }} />
