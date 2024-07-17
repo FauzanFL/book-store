@@ -1,5 +1,6 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
+  Alert,
   Box,
   Button,
   CssBaseline,
@@ -13,12 +14,15 @@ import {
 import { useEffect, useState } from 'react';
 import { isLogin, login } from '../api/users';
 import { useNavigate } from 'react-router-dom';
+import { alertError, alertSuccess } from '../utils/sweetalert';
 
 const Login = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     const isLoggedIn = async () => {
@@ -31,14 +35,50 @@ const Login = () => {
     isLoggedIn();
   }, [navigate]);
 
+  const isValid = () => {
+    let valid = true;
+    const msg = [];
+    if (username === '') {
+      msg.push("Username can't be empty");
+      valid = false;
+    }
+
+    if (password === '') {
+      msg.push("Password can't be empty");
+      valid = false;
+    }
+
+    setMessages(msg);
+    return valid;
+  };
+
   const handleLogin = async () => {
-    try {
-      const res = await login({ username, password });
-      if (res.status === 200) {
-        navigate('/books');
+    if (isValid()) {
+      try {
+        const res = await login({ username, password });
+        if (res.status === 200) {
+          setShowPassword(false);
+          alertSuccess('Login Successful');
+          navigate('/books');
+        }
+      } catch (e) {
+        const msg = [];
+        const status = e.response.status;
+        const resMsg = e.response.data.message;
+        if (status === 404 && resMsg == 'User not found') {
+          msg.push('Wrong Username');
+          setMessages(msg);
+          setShowAlert(true);
+        } else if (status === 401 && resMsg == 'Invalid password') {
+          msg.push('Wrong Password');
+          setMessages(msg);
+          setShowAlert(true);
+        } else {
+          alertError(resMsg);
+        }
       }
-    } catch (e) {
-      console.log(e);
+    } else {
+      setShowAlert(true);
     }
   };
 
@@ -85,6 +125,15 @@ const Login = () => {
             noValidate
             autoComplete="off"
           >
+            {showAlert && (
+              <Alert severity="error" sx={{ m: 1 }}>
+                <ul className="list-disc ml-4">
+                  {messages.map((msg, i) => {
+                    return <li key={i}>{msg}</li>;
+                  })}
+                </ul>
+              </Alert>
+            )}
             <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
               <InputLabel htmlFor="username">Username</InputLabel>
               <OutlinedInput

@@ -7,6 +7,7 @@ const cartController = new CartsController();
 
 router.get('/', cartController.getCart);
 router.post('/add-item', cartController.addToCart);
+router.get('/paid', cartController.cartPaid);
 router.delete('/remove-item/:itemId', cartController.removeFromCart);
 
 module.exports = router;

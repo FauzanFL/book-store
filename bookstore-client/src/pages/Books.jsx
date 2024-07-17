@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Container,
@@ -10,12 +11,13 @@ import {
 } from '@mui/material';
 import Header from '../components/Header';
 import { useEffect, useState } from 'react';
-import { getAllBooks } from '../api/books';
+import { getAllBooks, orderBook } from '../api/books';
 import BookCard from '../components/BookCard';
 import CartButton from '../components/CartButton';
 import { isLogin } from '../api/users';
 import { useNavigate } from 'react-router-dom';
 import { addItemToCart } from '../api/carts';
+import { alertError, alertSuccess, alertWarning } from '../utils/sweetalert';
 
 const style = {
   position: 'absolute',
@@ -36,12 +38,15 @@ const Books = () => {
   const [openOrder, setOpenOrder] = useState(false);
   const [selectedBook, setSelectedBook] = useState({});
   const [quantity, setQuantity] = useState(0);
+  const [showAlert, setShowAlert] = useState(false);
+  const [messages, setMessages] = useState([]);
   const handleOpenAddCart = (book) => {
     setSelectedBook(book);
     setOpenAddCart(true);
   };
   const handleCloseAddCart = () => {
     setOpenAddCart(false);
+    setShowAlert(false);
     setQuantity(0);
   };
   const handleOpenOrder = (book) => {
@@ -50,6 +55,7 @@ const Books = () => {
   };
   const handleCloseOrder = () => {
     setOpenOrder(false);
+    setShowAlert(false);
     setQuantity(0);
   };
 
@@ -59,7 +65,7 @@ const Books = () => {
         await isLogin();
       } catch (e) {
         if (e.request.status === 401) {
-          // set alert
+          alertWarning('Unauthorized: Please log in!');
           navigate('/');
         } else {
           console.error(e);
@@ -93,26 +99,59 @@ const Books = () => {
     }
   };
 
+  const isValid = () => {
+    let valid = true;
+    const msg = [];
+    if (quantity <= 0) {
+      msg.push('quantity must be more than 0');
+      valid = false;
+    }
+
+    setMessages(msg);
+    return valid;
+  };
+
   const handleAddToCart = async () => {
     const data = {
       book_id: selectedBook.id,
       quantity,
     };
-    if (quantity <= 0) {
-      // alert error
-      console.log('quantity must be more than 0');
-      return;
-    }
-    try {
-      const res = await addItemToCart(data);
-      if (res.status === 200) {
-        // alert success
-        console.log(res.data.message);
-        render();
-        handleCloseAddCart();
+    if (isValid()) {
+      try {
+        const res = await addItemToCart(data);
+        if (res.status === 200 || res.status === 201) {
+          alertSuccess('Success add book to cart');
+          render();
+          setShowAlert(false);
+          handleCloseAddCart();
+        }
+      } catch (e) {
+        alertError(e.resoonse.data.message);
       }
-    } catch (e) {
-      console.error(e);
+    } else {
+      setShowAlert(true);
+    }
+  };
+
+  const handleOrder = async () => {
+    const data = {
+      book_id: selectedBook.id,
+      total: selectedBook.price * quantity,
+      quantity,
+    };
+    if (isValid()) {
+      try {
+        const res = await orderBook(data);
+        if (res.status === 200) {
+          alertSuccess('Order Successful');
+          render();
+          handleCloseOrder();
+        }
+      } catch (e) {
+        alertError(e.resoonse.data.message);
+      }
+    } else {
+      setShowAlert(true);
     }
   };
 
@@ -150,6 +189,15 @@ const Books = () => {
           >
             Add to Cart
           </Typography>
+          {showAlert && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              <ul className="list-disc ml-4">
+                {messages.map((msg, i) => {
+                  return <li key={i}>{msg}</li>;
+                })}
+              </ul>
+            </Alert>
+          )}
           <Container id="modal-modal-description">
             <FormControl fullWidth sx={{ mb: 1 }} variant="outlined">
               <InputLabel htmlFor="book">Book</InputLabel>
@@ -186,11 +234,20 @@ const Books = () => {
           <Typography
             id="modal-modal-title"
             variant="h5"
-            sx={{ mb: 2 }}
+            sx={{ mb: 1 }}
             component="h2"
           >
             Order Book
           </Typography>
+          {showAlert && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              <ul className="list-disc ml-4">
+                {messages.map((msg, i) => {
+                  return <li key={i}>{msg}</li>;
+                })}
+              </ul>
+            </Alert>
+          )}
           <Container id="modal-modal-description">
             <FormControl fullWidth sx={{ mb: 1 }} variant="outlined">
               <InputLabel htmlFor="book">Book</InputLabel>
@@ -211,7 +268,7 @@ const Books = () => {
                 onChange={({ target }) => setQuantity(target.value)}
               />
             </FormControl>
-            <Button fullWidth variant="contained">
+            <Button onClick={handleOrder} fullWidth variant="contained">
               Go
             </Button>
           </Container>

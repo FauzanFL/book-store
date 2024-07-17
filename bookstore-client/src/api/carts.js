@@ -1,10 +1,16 @@
 import axios from 'axios';
 
 export const getCart = async () => {
-  const result = await axios.get(`${import.meta.env.VITE_API_URL}/carts`,
-    {
-      withCredentials: true,
-    });
+  const result = await axios.get(`${import.meta.env.VITE_API_URL}/carts`, {
+    withCredentials: true,
+  });
+  return result;
+};
+
+export const cartPaid = async () => {
+  const result = await axios.get(`${import.meta.env.VITE_API_URL}/carts/paid`, {
+    withCredentials: true,
+  });
   return result;
 };
 

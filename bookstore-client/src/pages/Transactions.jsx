@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { isLogin } from '../api/users';
 import { getTransactions } from '../api/transactions';
+import { alertWarning } from '../utils/sweetalert';
 
 const Transactions = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const Transactions = () => {
         await isLogin();
       } catch (e) {
         if (e.request.status === 401) {
-          // set alert
+          alertWarning('Unauthorized: Please log in!');
           navigate('/');
         } else {
           console.error(e);
@@ -48,21 +49,31 @@ const Transactions = () => {
     isLoggedIn();
   }, [navigate]);
 
-  function createData(total, status, date) {
-    return { total, status, date };
+  function createData(total, books, status, date) {
+    return { total, books, status, date };
   }
+
+  const formatBooks = (books) => {
+    return (
+      <ul>
+        {books.map((book, i) => (
+          <li key={i}>{`${book.title} x ${book.quantity}`}</li>
+        ))}
+      </ul>
+    );
+  };
 
   let rows = [];
   if (transactions && transactions.length !== 0) {
     rows = transactions.map((transaction) => {
       return createData(
         transaction.total,
+        formatBooks(JSON.parse(transaction.books)),
         transaction.status,
-        transaction.created_at
+        new Date(transaction.createdAt).toLocaleString()
       );
     });
   }
-  //   const rows = [createData(500000, 'success', '2021-10-10')];
 
   return (
     <>
@@ -78,6 +89,9 @@ const Transactions = () => {
                 <TableRow>
                   <TableCell>
                     <b>Total</b>
+                  </TableCell>
+                  <TableCell align="right">
+                    <b>Books</b>
                   </TableCell>
                   <TableCell align="right">
                     <b>Status</b>
@@ -96,6 +110,7 @@ const Transactions = () => {
                     <TableCell component="th" scope="row">
                       <b>Rp. {row.total}</b>
                     </TableCell>
+                    <TableCell align="right">{row.books}</TableCell>
                     <TableCell align="right">{row.status}</TableCell>
                     <TableCell align="right">{row.date}</TableCell>
                   </TableRow>

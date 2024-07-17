@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.User, {
         foreignKey: 'user_id',
         targetKey: 'id',
-        as: 'user'
+        as: 'user',
       });
     }
   }
@@ -57,6 +57,7 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      books: DataTypes.TEXT,
       status: {
         type: DataTypes.STRING,
         allowNull: false,

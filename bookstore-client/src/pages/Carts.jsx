@@ -5,19 +5,19 @@ import { Paid, RemoveCircle } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { isLogin } from '../api/users';
-import { getCart, removeItemFromCart } from '../api/carts';
+import { cartPaid, getCart, removeItemFromCart } from '../api/carts';
+import { alertError, alertSuccess, alertWarning } from '../utils/sweetalert';
 
 const Item = ({ data, render }) => {
   const handleRemove = async () => {
     try {
       const res = await removeItemFromCart(data.id);
       if (res.status === 200) {
-        console.log(res.data.message);
+        alertSuccess('Success remove book from cart');
         render();
       }
     } catch (e) {
-      // alert error
-      console.log(e);
+      alertError(e.response.data.message);
     }
   };
   return (
@@ -80,7 +80,7 @@ const Carts = () => {
         await isLogin();
       } catch (e) {
         if (e.request.status === 401) {
-          // set alert
+          alertWarning('Unauthorized: Please log in!');
           navigate('/');
         } else {
           console.error(e);
@@ -121,6 +121,18 @@ const Carts = () => {
     }, 0);
   }
 
+  const handlePaid = async () => {
+    try {
+      const res = await cartPaid();
+      if (res.status === 200) {
+        alertSuccess('Cart items paid successfull');
+        render();
+      }
+    } catch (e) {
+      alertError(e.response.data.message);
+    }
+  };
+
   return (
     <>
       <Header />
@@ -153,7 +165,7 @@ const Carts = () => {
             <b>Total</b>
             <b>Rp. {total}</b>
           </div>
-          <Button variant="contained" color="warning">
+          <Button onClick={handlePaid} variant="contained" color="warning">
             <Paid sx={{ mr: 1 }} />
             Pay
           </Button>

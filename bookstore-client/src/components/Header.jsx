@@ -1,6 +1,7 @@
 import { Button, Link, Typography } from '@mui/material';
 import { logout } from '../api/users';
 import { useNavigate } from 'react-router-dom';
+import { alertError, alertSuccess } from '../utils/sweetalert';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -9,10 +10,11 @@ const Header = () => {
     try {
       const res = await logout();
       if (res.status === 200) {
+        alertSuccess('Log out successfull');
         navigate('/');
       }
     } catch (e) {
-      console.log(e);
+      alertError(e.response.data.message);
     }
   };
   return (

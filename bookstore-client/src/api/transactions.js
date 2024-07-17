@@ -9,14 +9,3 @@ export const getTransactions = async () => {
   );
   return result;
 };
-
-export const addTransactions = async (data) => {
-  const result = await axios.post(
-    `${import.meta.env.VITE_API_URL}/transactions/add`,
-    data,
-    {
-      withCredentials: true,
-    }
-  );
-  return result;
-};

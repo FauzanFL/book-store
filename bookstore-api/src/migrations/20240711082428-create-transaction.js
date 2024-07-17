@@ -21,6 +21,9 @@ module.exports = {
       total: {
         type: Sequelize.INTEGER,
       },
+      books: {
+        type: Sequelize.TEXT,
+      },
       status: {
         type: Sequelize.STRING,
       },
