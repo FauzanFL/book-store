@@ -162,7 +162,7 @@ const Books = () => {
         <Typography variant="h3" sx={{ mb: 2 }}>
           Book List
         </Typography>
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {books.map((book, i) => (
             <BookCard
               key={i}

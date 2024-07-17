@@ -88,7 +88,7 @@ const Login = () => {
         <CssBaseline />
         <Box
           sx={{
-            width: 500,
+            maxWidth: 500,
             mx: 'auto',
             my: 4,
             py: 3,

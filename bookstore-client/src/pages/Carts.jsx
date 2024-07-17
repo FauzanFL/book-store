@@ -1,5 +1,12 @@
 /* eslint-disable react/prop-types */
-import { Box, Button, Card, CardMedia, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardMedia,
+  Container,
+  Typography,
+} from '@mui/material';
 import Header from '../components/Header';
 import { Paid, RemoveCircle } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -31,10 +38,11 @@ const Item = ({ data, render }) => {
             alignItems: 'center',
             p: 1,
           }}
+          className="flex-col md:flex-row"
         >
           <div className="flex items-center">
             <CardMedia
-              sx={{ height: 120, width: 70, mr: 2 }}
+              sx={{ height: 120, width: 80, mr: 2 }}
               image={data.book.image}
             />
             <div className="">
@@ -46,7 +54,7 @@ const Item = ({ data, render }) => {
               </Typography>
             </div>
           </div>
-          <div className="">
+          <div className="min-w-24 ml-2 mt-2 md:mt-0">
             <div className="border-b border-black p-1">
               <Typography variant="subtitle2">
                 <p>Rp. {data.book.price}</p>
@@ -137,39 +145,41 @@ const Carts = () => {
     <>
       <Header />
       <main>
-        <Box
-          sx={{
-            width: 500,
-            mx: 'auto',
-            my: 4,
-            py: 2,
-            px: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            borderRadius: 1,
-            boxShadow: 2,
-          }}
-          variant="outlined"
-        >
-          <Typography variant="h4" gutterbottom>
-            <b>Cart</b>
-          </Typography>
-          <div className="">
-            {cart.items &&
-              cart.items.map((item, i) => (
-                <Item key={i} data={item} render={render} />
-              ))}
-          </div>
-          <div className="flex justify-between border-t border-black py-2">
-            <b>Total</b>
-            <b>Rp. {total}</b>
-          </div>
-          <Button onClick={handlePaid} variant="contained" color="warning">
-            <Paid sx={{ mr: 1 }} />
-            Pay
-          </Button>
-        </Box>
+        <Container>
+          <Box
+            sx={{
+              maxWidth: 500,
+              mx: 'auto',
+              my: 4,
+              py: 2,
+              px: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+              borderRadius: 1,
+              boxShadow: 2,
+            }}
+            variant="outlined"
+          >
+            <Typography variant="h4" gutterbottom>
+              <b>Cart</b>
+            </Typography>
+            <div className="">
+              {cart.items &&
+                cart.items.map((item, i) => (
+                  <Item key={i} data={item} render={render} />
+                ))}
+            </div>
+            <div className="flex justify-between border-t border-black py-2">
+              <b>Total</b>
+              <b>Rp. {total}</b>
+            </div>
+            <Button onClick={handlePaid} variant="contained" color="warning">
+              <Paid sx={{ mr: 1 }} />
+              Pay
+            </Button>
+          </Box>
+        </Container>
       </main>
     </>
   );
