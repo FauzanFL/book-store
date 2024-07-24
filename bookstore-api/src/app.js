@@ -10,6 +10,7 @@ const usersRoute = require('./routes/usersRoute');
 const booksRoute = require('./routes/booksRoute');
 const cartsRoute = require('./routes/cartsRoute');
 const transactionRoute = require('./routes/transactionRoute');
+const { swaggerSpec } = require('./utils/swagger');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -38,4 +39,5 @@ app.use('/transactions', transactionRoute);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+  swaggerSpec(app);
 });

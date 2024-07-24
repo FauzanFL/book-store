@@ -125,6 +125,10 @@ class CartsController {
         return { title: item.book.title, quantity: item.quantity };
       });
 
+      if (books.length === 0) {
+        return res.status(400).json({ message: "Cart don't have any item" });
+      }
+
       await CartItem.destroy({ where: { cart_id: cart.id } });
 
       const total = cart.items.reduce((num, item) => {
