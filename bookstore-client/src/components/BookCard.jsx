@@ -1,4 +1,4 @@
-import { AddShoppingCart, Paid } from '@mui/icons-material';
+import { AddShoppingCart } from '@mui/icons-material';
 import {
   Button,
   Card,
@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 
 /* eslint-disable react/prop-types */
-const BookCard = ({ book, openModalAddCart, openModalOrder }) => {
+const BookCard = ({ book, openModalAddCart }) => {
   return (
     <>
       <Card sx={{ p: 1 }}>
@@ -42,7 +42,7 @@ const BookCard = ({ book, openModalAddCart, openModalOrder }) => {
             <AddShoppingCart sx={{ m: '2px 5px 2px 2px' }} />
             Add to Cart
           </Button>
-          <Button
+          {/* <Button
             onClick={() => openModalOrder(book)}
             size="small"
             color="warning"
@@ -51,7 +51,7 @@ const BookCard = ({ book, openModalAddCart, openModalOrder }) => {
           >
             <Paid sx={{ m: '2px 5px 2px 2px' }} />
             Order
-          </Button>
+          </Button> */}
         </CardActions>
       </Card>
     </>

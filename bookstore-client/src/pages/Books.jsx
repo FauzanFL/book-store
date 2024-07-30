@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import Header from '../components/Header';
 import { useEffect, useState } from 'react';
-import { getAllBooks, orderBook } from '../api/books';
+import { getAllBooks } from '../api/books';
 import BookCard from '../components/BookCard';
 import CartButton from '../components/CartButton';
 import { isLogin } from '../api/users';
@@ -35,7 +35,7 @@ const Books = () => {
   const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [openAddCart, setOpenAddCart] = useState(false);
-  const [openOrder, setOpenOrder] = useState(false);
+  // const [openOrder, setOpenOrder] = useState(false);
   const [selectedBook, setSelectedBook] = useState({});
   const [quantity, setQuantity] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
@@ -49,15 +49,15 @@ const Books = () => {
     setShowAlert(false);
     setQuantity(0);
   };
-  const handleOpenOrder = (book) => {
-    setSelectedBook(book);
-    setOpenOrder(true);
-  };
-  const handleCloseOrder = () => {
-    setOpenOrder(false);
-    setShowAlert(false);
-    setQuantity(0);
-  };
+  // const handleOpenOrder = (book) => {
+  //   setSelectedBook(book);
+  //   setOpenOrder(true);
+  // };
+  // const handleCloseOrder = () => {
+  //   setOpenOrder(false);
+  //   setShowAlert(false);
+  //   setQuantity(0);
+  // };
 
   useEffect(() => {
     const isLoggedIn = async () => {
@@ -133,27 +133,27 @@ const Books = () => {
     }
   };
 
-  const handleOrder = async () => {
-    const data = {
-      book_id: selectedBook.id,
-      total: selectedBook.price * quantity,
-      quantity,
-    };
-    if (isValid()) {
-      try {
-        const res = await orderBook(data);
-        if (res.status === 200) {
-          alertSuccess('Order Successful');
-          render();
-          handleCloseOrder();
-        }
-      } catch (e) {
-        alertError(e.resoonse.data.message);
-      }
-    } else {
-      setShowAlert(true);
-    }
-  };
+  // const handleOrder = async () => {
+  //   const data = {
+  //     book_id: selectedBook.id,
+  //     total: selectedBook.price * quantity,
+  //     quantity,
+  //   };
+  //   if (isValid()) {
+  //     try {
+  //       const res = await orderBook(data);
+  //       if (res.status === 200) {
+  //         alertSuccess('Order Successful');
+  //         render();
+  //         handleCloseOrder();
+  //       }
+  //     } catch (e) {
+  //       alertError(e.resoonse.data.message);
+  //     }
+  //   } else {
+  //     setShowAlert(true);
+  //   }
+  // };
 
   return (
     <>
@@ -168,7 +168,7 @@ const Books = () => {
               key={i}
               book={book}
               openModalAddCart={handleOpenAddCart}
-              openModalOrder={handleOpenOrder}
+              // openModalOrder={handleOpenOrder}
             />
           ))}
         </div>
@@ -224,7 +224,7 @@ const Books = () => {
           </Container>
         </Box>
       </Modal>
-      <Modal
+      {/* <Modal
         open={openOrder}
         onClose={handleCloseOrder}
         aria-labelledby="modal-modal-title"
@@ -273,7 +273,7 @@ const Books = () => {
             </Button>
           </Container>
         </Box>
-      </Modal>
+      </Modal> */}
     </>
   );
 };
