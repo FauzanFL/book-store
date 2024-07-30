@@ -34,4 +34,6 @@ const transactionController = new TransactionsController();
  */
 router.get('/', transactionController.getTransactions);
 
+router.get('/process', transactionController.processTransaction);
+
 module.exports = router;

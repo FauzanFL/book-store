@@ -74,11 +74,20 @@ router.post('/add-item', cartController.addToCart);
 /**
  * @openapi
  * /carts/paid:
- *  get:
+ *  post:
  *    tags:
  *    - Carts
  *    summary: Paid cart
  *    description: paid cart
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              transaction_id:
+ *                type: integer
  *    responses:
  *      200:
  *        description: Cart Has Paid
@@ -91,7 +100,7 @@ router.post('/add-item', cartController.addToCart);
  *      500:
  *        description: Internal Server Error
  */
-router.get('/paid', cartController.cartPaid);
+router.post('/paid', cartController.cartPaid);
 
 /**
  * @openapi

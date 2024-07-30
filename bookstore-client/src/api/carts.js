@@ -7,8 +7,8 @@ export const getCart = async () => {
   return result;
 };
 
-export const cartPaid = async () => {
-  const result = await axios.get(`${import.meta.env.VITE_API_URL}/carts/paid`, {
+export const cartPaid = async (data) => {
+  const result = await axios.post(`${import.meta.env.VITE_API_URL}/carts/paid`, data, {
     withCredentials: true,
   });
   return result;

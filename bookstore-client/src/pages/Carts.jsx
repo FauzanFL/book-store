@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { isLogin } from '../api/users';
 import { cartPaid, getCart, removeItemFromCart } from '../api/carts';
 import { alertError, alertSuccess, alertWarning } from '../utils/sweetalert';
+import { processTransaction } from '../api/transactions';
 
 const Item = ({ data, render }) => {
   const handleRemove = async () => {
@@ -131,10 +132,24 @@ const Carts = () => {
 
   const handlePaid = async () => {
     try {
-      const res = await cartPaid();
+      const res = await processTransaction();
       if (res.status === 200) {
-        alertSuccess('Cart items paid successfull');
         render();
+        window.snap.pay(res.data.token, {
+          onSuccess: async (result) => {
+            await cartPaid({ transaction_id: res.data.id });
+            console.log(result);
+          },
+          onPending: (result) => {
+            console.log(result);
+          },
+          onError: (err) => {
+            console.log(err);
+          },
+          onClose: () => {
+            console.log('Anda belum menyelesaikan pembayaran');
+          },
+        });
       }
     } catch (e) {
       alertError(e.response.data.message);
